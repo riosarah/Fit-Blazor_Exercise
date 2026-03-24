@@ -1,0 +1,67 @@
+﻿@page "/companies"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender : false))
+
+
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudText Typo="Typo.h4" Class="mt-4 ml-4 mb-4">Companies</MudText>
+
+<MudStack Class="ml-4 mb-4" Style="width:80%" Row="true" Spacing="2">
+    <MudSelect T="int?" Value="_selectedDepartmentId" ValueChanged="OnDepartmentChanged"
+               Label="Department auswählen"
+               Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter"
+               ToStringFunc="@(authorId => _departments.FirstOrDefault(a => a.Id == _selectedDepartmentId)?.DepartmentName ?? string.Empty)"
+               Style="flex-grow:1">
+        @foreach (var department in _departments)
+        {
+            <MudSelectItem Value="@((int?)department.Id)">@department.DepartmentName</MudSelectItem>
+        }
+    </MudSelect>
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Material.Filled.Add"
+               Disabled="@(!_selectedDepartmentId.HasValue)"
+               OnClick="AddCompany">
+        Add Company
+    </MudButton>
+</MudStack>
+
+@if (_selectedDepartmentId.HasValue)
+{
+    <MudDataGrid @ref="_grid"
+                 T="GetCompanyDto"
+                 ServerData="LoadServerData"
+                 RowsPerPage="3"
+                 Class="ml-4"
+                 Style="width:80%">
+        <Columns>
+            <PropertyColumn Property="x => x.Id" Title="Id" />
+            <PropertyColumn Property="x => x.CompanyName" Title="Titel" />
+            <PropertyColumn Property="x => x.Zip" Title="Jahr" />
+            <PropertyColumn Property="x => x.City" Title="Stadt" />
+            <TemplateColumn T="GetCompanyDto" Title="Aktionen" Sortable="false">
+                <CellTemplate Context="ctx">
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   OnClick="() => EditCompany(ctx.Item.Id)" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Error"
+                                   Size="Size.Small"
+                                   OnClick="() => DeleteCompany(ctx.Item.Id, ctx.Item.CompanyName)" />
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="GetCompanyDto" />
+        </PagerContent>
+    </MudDataGrid>
+}
+else
+{
+    <MudText Class="ml-4">Bitte wählen Sie einen Autor aus.</MudText>
+}
+
