@@ -1,0 +1,64 @@
+﻿@page "/company/edit/{Id:int}"
+@using Application.Features.Companies.Commands.AddCompany
+@using MudBlazor
+@layout Blazor.Components.Layout.ServerLayout
+@rendermode InteractiveServer
+
+<PageTitle>Edit Company</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mt-4 ml-4 mb-4">Edit Company</MudText>
+
+<MudCard Style="width:50%">
+    <MudForm Model="@_model"
+             Validation="@(_companyValidator.ValidateValue)"
+             ValidationDelay="0"
+             SuppressImplicitSubmission="true"
+             @bind-IsValid="_isFormValid">
+        <MudCardContent>
+            <MudTextField @bind-Value="_model.CompanyName"
+                          Label="Company Name"
+                          HelperText="Mindestens 2 Zeichen erforderlich"
+                          Immediate="true"
+                          For="@(() => _model.CompanyName)" />
+            <MudNumericField @bind-Value="_model.Zip"
+                             Label="ZIP"
+                             HelperText="Gültige PLZ erforderlich"
+                             Immediate="true"
+                             For="@(() => _model.Zip)" />
+            <MudTextField @bind-Value="_model.City"
+                          Label="Stadt"
+                          HelperText="Stadt erforderlich"
+                          Immediate="true"
+                          For="@(() => _model.City)" />
+            <MudTextField @bind-Value="_model.DepartmentName"
+                          Label="Department"
+                          HelperText="Department erforderlich"
+                          Immediate="true"
+                          For="@(() => _model.DepartmentName)" />
+            <MudTextField Value="@_department.DepartmentName"
+                          Label="Department"
+                          ReadOnly="true"
+                          Disabled="true" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save"
+                       Disabled="@(_saving || !(CheckFormValidity()) || !HasChanges)"
+                       OnClick="Submit">Save</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Default" StartIcon="@Icons.Material.Filled.Cancel"
+                       Class="ml-4" OnClick="Back">Cancel</MudButton>
+        </MudCardActions>
+        @if (_errors.Count > 0)
+        {
+            <MudCardContent Class="pt-0">
+                <MudAlert Severity="@MudBlazor.Severity.Error">
+                    <ul style="margin:0; padding-left:18px;">
+                        @foreach (var e in _errors)
+                        {
+                            <li>@e</li>
+                        }
+                    </ul>
+                </MudAlert>
+            </MudCardContent>
+        }
+    </MudForm>
+</MudCard>
