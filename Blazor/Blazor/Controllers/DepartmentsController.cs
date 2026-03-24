@@ -1,6 +1,7 @@
+using Application.Features.Departments.Queries.GetAllDepartments;
 using MediatR;
-using Shared.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Dtos;
 
 namespace Blazor.Server.Controllers;
 
@@ -11,6 +12,12 @@ public class DepartmentsController(IMediator mediator) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IReadOnlyCollection<GetDepartmentDto>>> GetAll(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException("Diese Methode muss noch implementiert werden.");
+        var result = await mediator.Send(new GetAllDepartmentsQuery());
+            if (!result.IsSuccess || result.Value == null)
+        {
+            return BadRequest(result.Message);
+        }
+
+        return Ok(result.Value);
     }
 }
