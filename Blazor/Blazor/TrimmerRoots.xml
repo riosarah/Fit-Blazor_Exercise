@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <!-- Preserve Serilog assemblies that are loaded via reflection -->
+  <assembly fullname="Serilog.Sinks.Console" preserve="all" />
+  <assembly fullname="Serilog.Sinks.File" preserve="all" />
+  <assembly fullname="Serilog.Enrichers.Environment" preserve="all" />
+  <assembly fullname="Serilog.Enrichers.Thread" preserve="all" />
+  <assembly fullname="Serilog.Settings.Configuration" preserve="all" />
+  
+  <!-- Preserve MediatR handlers that use reflection -->
+  <assembly fullname="Application" preserve="all" />
+  
+  <!-- Preserve FluentValidation validators -->
+  <assembly fullname="FluentValidation" preserve="all" />
+</linker>

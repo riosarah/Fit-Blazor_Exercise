@@ -1,0 +1,22 @@
+﻿@using System.Reflection
+
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="@_additionalAssemblies">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>
+
+@code {
+    private Assembly[]? _additionalAssemblies;
+
+    protected override void OnInitialized()
+    {
+        var blazorServerAssembly = AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(a => a.GetName().Name == "Blazor");
+        
+        _additionalAssemblies = blazorServerAssembly != null 
+            ? [blazorServerAssembly] 
+            : [];
+    }
+}
