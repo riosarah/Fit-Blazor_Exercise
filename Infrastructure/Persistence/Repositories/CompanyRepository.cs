@@ -15,7 +15,12 @@ public class CompanyRepository(AppDbContext ctx) : GenericRepository<Company>(ct
     /// </summary>
     public async Task<Company?> GetByCompanyNameAsync(string companyName, CancellationToken ct = default)
     {
-        throw new NotImplementedException("Diese Methode muss noch implementiert werden.");
+        var com= await ctx.Companies.FindAsync(companyName, ct);
+        if (com != null)
+        {
+            return com;
+        }
+        return null;
     }
 
     /// <summary>
@@ -23,7 +28,8 @@ public class CompanyRepository(AppDbContext ctx) : GenericRepository<Company>(ct
     /// </summary>
     public async Task<int> CountByDepartmentIdAsync(int departmentId, CancellationToken ct = default)
     {
-        throw new NotImplementedException("Diese Methode muss noch implementiert werden.");
+        var com = await ctx.Companies.Where(e => e.DepartmentId == departmentId).CountAsync(ct);
+        return com;
     }
 
     /// <summary>
@@ -32,6 +38,23 @@ public class CompanyRepository(AppDbContext ctx) : GenericRepository<Company>(ct
     public async Task<IEnumerable<GetCompanyDto>> GetPagedByDepartmentIdAsync(
         int departmentId, int skip, int pageSize, CancellationToken ct = default)
     {
-        throw new NotImplementedException("Diese Methode muss noch implementiert werden.");
+        var pagedCom = await Set.AsNoTracking().Include(e => e.Department)
+            .Where(e => e.DepartmentId == departmentId)
+            .OrderByDescending(e => e.DepartmentId)
+            .ThenBy(e => e.CompanyName)
+            .Skip(skip)
+            .Take(pageSize)
+            .Select(b => new GetCompanyDto(
+                b.Id,
+                b.CompanyName,
+                b.Zip,
+                b.City,
+                b.DepartmentId,
+                b.Department.DepartmentName)).ToListAsync(ct);
+
+        return pagedCom;
+
+          
+    
     }
 }
