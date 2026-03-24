@@ -9,7 +9,14 @@ public static class CompanyValidationRules
 
     public static IRuleBuilderOptions<T, string> ApplyCompanyNameRules<T>(this IRuleBuilder<T, string> builder)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(builder);
+
+        return builder
+            .NotEmpty()
+                .WithMessage("Name darf nicht leer sein.")
+            .MinimumLength(CompanyNameMinLength)
+                .WithMessage($"Name muss mindestens {CompanyNameMinLength} Zeichen haben.");
+
     }
 
     public static IRuleBuilderOptions<T, string> ApplyZipCodeRules<T>(
